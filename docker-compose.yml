@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  rag-chatbot:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    env_file:
+      - .env
+    volumes:
+      # Persist ChromaDB data
+      - ./backend/chroma_db:/app/backend/chroma_db
+      # Mount docs for document loading (optional, for development)
+      - ./docs:/app/docs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/courses"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
