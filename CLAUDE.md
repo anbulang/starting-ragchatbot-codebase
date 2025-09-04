@@ -32,12 +32,28 @@ ANTHROPIC_API_KEY=your_api_key_here
 ```
 
 ### Running the Application
+
+#### Native (requires Python 3.13+)
 ```bash
 # Quick start (recommended)
 ./run.sh
 
 # Manual start
 cd backend && uv run uvicorn app:app --reload --port 8000
+```
+
+#### Docker (recommended for macOS Intel compatibility)
+```bash
+# Copy environment file and add your API key
+cp .env.example .env
+# Edit .env to add your ANTHROPIC_API_KEY
+
+# Build and run with Docker Compose
+docker-compose up --build
+
+# Or build and run manually
+docker build -t rag-chatbot .
+docker run -p 8000:8000 --env-file .env rag-chatbot
 ```
 
 ### Key Development Notes
