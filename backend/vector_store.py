@@ -173,6 +173,7 @@ class VectorStore:
         # Use title with chunk index for unique IDs
         ids = [f"{chunk.course_title.replace(' ', '_')}_{chunk.chunk_index}" for chunk in chunks]
         
+        # ChromaDB 的自动向量化机制
         self.course_content.add(
             documents=documents,
             metadatas=metadatas,
