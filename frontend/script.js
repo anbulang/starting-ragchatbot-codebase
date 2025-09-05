@@ -122,10 +122,23 @@ function addMessage(content, type, sources = null, isWelcome = false) {
     let html = `<div class="message-content">${displayContent}</div>`;
     
     if (sources && sources.length > 0) {
+        // Process sources to create clickable links where available
+        const processedSources = sources.map(source => {
+            if (typeof source === 'object' && source.text && source.link) {
+                // Create clickable link that opens in new tab
+                return `<a href="${source.link}" target="_blank" class="source-link">${escapeHtml(source.text)}</a>`;
+            } else if (typeof source === 'string') {
+                // Plain text source
+                return escapeHtml(source);
+            } else {
+                return escapeHtml(String(source));
+            }
+        });
+        
         html += `
             <details class="sources-collapsible">
                 <summary class="sources-header">Sources</summary>
-                <div class="sources-content">${sources.join(', ')}</div>
+                <div class="sources-content">${processedSources.join(', ')}</div>
             </details>
         `;
     }
