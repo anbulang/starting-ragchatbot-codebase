@@ -170,6 +170,19 @@ async function createNewSession() {
     addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);
 }
 
+async function startNewChat() {
+    // Clear input field
+    chatInput.value = '';
+    chatInput.disabled = false;
+    sendButton.disabled = false;
+    
+    // Create new session (clears chat and resets session)
+    await createNewSession();
+    
+    // Focus on input for immediate use
+    chatInput.focus();
+}
+
 // Load course statistics
 async function loadCourseStats() {
     try {
