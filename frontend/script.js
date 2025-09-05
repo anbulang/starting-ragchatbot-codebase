@@ -171,16 +171,42 @@ async function createNewSession() {
 }
 
 async function startNewChat() {
-    // Clear input field
-    chatInput.value = '';
-    chatInput.disabled = false;
-    sendButton.disabled = false;
-    
-    // Create new session (clears chat and resets session)
-    await createNewSession();
-    
-    // Focus on input for immediate use
-    chatInput.focus();
+    try {
+        // Clear input field and reset UI state
+        chatInput.value = '';
+        chatInput.disabled = false;
+        sendButton.disabled = false;
+        
+        // Clear current chat messages
+        chatMessages.innerHTML = '';
+        
+        // Create new session on backend
+        const response = await fetch(`${API_URL}/new-session`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            currentSessionId = data.session_id;
+        } else {
+            // Fallback to local session reset if backend call fails
+            currentSessionId = null;
+        }
+        
+        // Add welcome message
+        addMessage('Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?', 'assistant', null, true);
+        
+        // Focus on input for immediate use
+        chatInput.focus();
+        
+    } catch (error) {
+        console.error('Error creating new session:', error);
+        // Fallback to local reset
+        await createNewSession();
+    }
 }
 
 // Load course statistics
