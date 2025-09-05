@@ -29,7 +29,9 @@ RUN uv sync --frozen
 # Copy only backend code and necessary files (not frontend for development)
 COPY backend ./backend
 COPY docs ./docs
-COPY pyproject.toml uv.lock ./
+COPY .env* ./
+COPY README.md ./
+COPY main.py ./
 
 # Create necessary directories for ChromaDB and frontend (for volume mounting)
 RUN mkdir -p /app/backend/chroma_db /app/frontend && \
