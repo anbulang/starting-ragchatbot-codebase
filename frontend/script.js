@@ -33,8 +33,6 @@ function setupEventListeners() {
     const newChatBtn = document.getElementById('newChatBtn');
     if (newChatBtn) {
         newChatBtn.addEventListener('click', startNewChat);
-        // Test function - expose to global scope for debugging
-        window.testNewChat = startNewChat;
     }
     
     // Suggested questions
