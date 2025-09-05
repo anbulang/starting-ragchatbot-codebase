@@ -31,9 +31,9 @@ COPY backend ./backend
 COPY docs ./docs
 COPY pyproject.toml uv.lock ./
 
-# Create necessary directories for ChromaDB and ensure permissions
-RUN mkdir -p /app/backend/chroma_db && \
-    chmod -R 755 /app/backend/chroma_db
+# Create necessary directories for ChromaDB and frontend (for volume mounting)
+RUN mkdir -p /app/backend/chroma_db /app/frontend && \
+    chmod -R 755 /app/backend/chroma_db /app/frontend
 
 # Expose port
 EXPOSE 8000
