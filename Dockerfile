@@ -29,7 +29,6 @@ RUN uv sync --frozen
 # Copy only backend code and necessary files (not frontend for development)
 COPY backend ./backend
 COPY docs ./docs
-COPY .env* ./
 COPY README.md ./
 COPY main.py ./
 
