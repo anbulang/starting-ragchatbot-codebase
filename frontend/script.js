@@ -175,6 +175,7 @@ async function createNewSession() {
 }
 
 async function startNewChat() {
+    console.log('startNewChat function called');
     try {
         // Clear input field and reset UI state
         chatInput.value = '';
