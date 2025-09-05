@@ -16,7 +16,7 @@ def analyze_search_tools():
     print("🔍 Analyzing search_tools.py...")
     
     try:
-        with open('../search_tools.py', 'r') as f:
+        with open('search_tools.py', 'r') as f:
             content = f.read()
         
         issues = []
