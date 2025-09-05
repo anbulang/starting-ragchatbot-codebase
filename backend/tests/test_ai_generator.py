@@ -233,6 +233,195 @@ class TestAIGenerator:
         # This should raise the exception since we don't have error handling in the method
         with pytest.raises(Exception, match="Tool execution failed"):
             self.ai_generator._handle_tool_execution(initial_response, base_params, mock_tool_manager)
+    
+    def test_sequential_tool_execution_two_rounds(self):
+        """Test sequential tool execution across 2 rounds."""
+        # Mock first response with tool use
+        tool1 = MockToolUseBlock("get_course_outline", {"course_title": "Python"}, "tool_1")
+        first_response = MockAnthropicResponse([tool1], stop_reason="tool_use")
+        
+        # Mock second response with tool use
+        tool2 = MockToolUseBlock("search_course_content", {"query": "lesson details"}, "tool_2")
+        second_response = MockAnthropicResponse([tool2], stop_reason="tool_use")
+        
+        # Mock final response
+        final_response = MockAnthropicResponse([MockTextBlock("Comprehensive answer based on outline and content")])
+        
+        # Set up side effects for client calls
+        self.mock_client.messages.create.side_effect = [first_response, second_response, final_response]
+        
+        # Mock tool manager
+        mock_tool_manager = Mock()
+        mock_tool_manager.execute_tool.side_effect = [
+            "Course outline: Lesson 1: Basics, Lesson 2: Advanced",
+            "Detailed content for lessons"
+        ]
+        
+        mock_tools = [
+            {"name": "get_course_outline", "description": "Get course outline"},
+            {"name": "search_course_content", "description": "Search content"}
+        ]
+        
+        result = self.ai_generator.generate_response(
+            "Tell me about the Python course structure and lesson details",
+            tools=mock_tools,
+            tool_manager=mock_tool_manager
+        )
+        
+        assert result == "Comprehensive answer based on outline and content"
+        
+        # Verify both tools were executed
+        assert mock_tool_manager.execute_tool.call_count == 2
+        calls = mock_tool_manager.execute_tool.call_args_list
+        assert calls[0][0][0] == "get_course_outline"
+        assert calls[1][0][0] == "search_course_content"
+        
+        # Verify 3 API calls were made (round 1, round 2, final)
+        assert self.mock_client.messages.create.call_count == 3
+    
+    def test_sequential_tool_execution_stops_after_one_round(self):
+        """Test that execution stops after first round if no more tools are needed."""
+        # Mock first response with tool use
+        tool1 = MockToolUseBlock("search_course_content", {"query": "Python basics"}, "tool_1")
+        first_response = MockAnthropicResponse([tool1], stop_reason="tool_use")
+        
+        # Mock second response without tool use (complete answer)
+        final_response = MockAnthropicResponse([MockTextBlock("Complete answer from first tool")])
+        
+        self.mock_client.messages.create.side_effect = [first_response, final_response]
+        
+        mock_tool_manager = Mock()
+        mock_tool_manager.execute_tool.return_value = "Search results: Python is a programming language"
+        
+        mock_tools = [{"name": "search_course_content", "description": "Search tool"}]
+        
+        result = self.ai_generator.generate_response(
+            "What is Python?",
+            tools=mock_tools,
+            tool_manager=mock_tool_manager
+        )
+        
+        assert result == "Complete answer from first tool"
+        
+        # Verify only one tool was executed
+        assert mock_tool_manager.execute_tool.call_count == 1
+        
+        # Verify 2 API calls were made (round 1 with tool, final response)
+        assert self.mock_client.messages.create.call_count == 2
+    
+    def test_sequential_tool_execution_max_rounds_limit(self):
+        """Test that execution stops after maximum 2 rounds."""
+        # Mock responses that would continue tool usage
+        tool1 = MockToolUseBlock("search_course_content", {"query": "query1"}, "tool_1")
+        first_response = MockAnthropicResponse([tool1], stop_reason="tool_use")
+        
+        tool2 = MockToolUseBlock("search_course_content", {"query": "query2"}, "tool_2")
+        second_response = MockAnthropicResponse([tool2], stop_reason="tool_use")
+        
+        # Final response after max rounds
+        final_response = MockAnthropicResponse([MockTextBlock("Response after 2 rounds")])
+        
+        self.mock_client.messages.create.side_effect = [first_response, second_response, final_response]
+        
+        mock_tool_manager = Mock()
+        mock_tool_manager.execute_tool.side_effect = ["Result 1", "Result 2"]
+        
+        mock_tools = [{"name": "search_course_content", "description": "Search tool"}]
+        
+        result = self.ai_generator.generate_response(
+            "Complex query requiring multiple searches",
+            tools=mock_tools,
+            tool_manager=mock_tool_manager
+        )
+        
+        assert result == "Response after 2 rounds"
+        
+        # Verify exactly 2 tools were executed (max rounds)
+        assert mock_tool_manager.execute_tool.call_count == 2
+        
+        # Verify 3 API calls were made (round 1, round 2, final)
+        assert self.mock_client.messages.create.call_count == 3
+    
+    def test_sequential_tool_execution_context_preservation(self):
+        """Test that context is preserved across rounds."""
+        tool1 = MockToolUseBlock("get_course_outline", {"course_title": "AI"}, "tool_1")
+        first_response = MockAnthropicResponse([tool1], stop_reason="tool_use")
+        
+        final_response = MockAnthropicResponse([MockTextBlock("Final answer")])
+        
+        self.mock_client.messages.create.side_effect = [first_response, final_response]
+        
+        mock_tool_manager = Mock()
+        mock_tool_manager.execute_tool.return_value = "Course outline results"
+        
+        mock_tools = [{"name": "get_course_outline", "description": "Outline tool"}]
+        
+        result = self.ai_generator.generate_response(
+            "Tell me about AI course",
+            conversation_history="Previous: User asked about ML",
+            tools=mock_tools,
+            tool_manager=mock_tool_manager
+        )
+        
+        assert result == "Final answer"
+        
+        # Check that conversation history was preserved in API calls
+        first_call_args = self.mock_client.messages.create.call_args_list[0][1]
+        assert "Previous: User asked about ML" in first_call_args["system"]
+        
+        # Check that final call preserves the conversation context
+        final_call_args = self.mock_client.messages.create.call_args_list[1][1]
+        assert "Previous: User asked about ML" in final_call_args["system"]
+    
+    def test_sequential_tool_execution_error_handling(self):
+        """Test error handling in sequential tool execution."""
+        tool1 = MockToolUseBlock("search_course_content", {"query": "test"}, "tool_1")
+        first_response = MockAnthropicResponse([tool1], stop_reason="tool_use")
+        
+        self.mock_client.messages.create.return_value = first_response
+        
+        # Mock tool manager that raises exception
+        mock_tool_manager = Mock()
+        mock_tool_manager.execute_tool.side_effect = Exception("Tool error")
+        
+        mock_tools = [{"name": "search_course_content", "description": "Search tool"}]
+        
+        result = self.ai_generator.generate_response(
+            "Search query",
+            tools=mock_tools,
+            tool_manager=mock_tool_manager
+        )
+        
+        # Should handle error gracefully and return error message
+        assert "Tool execution error" in result or "Error in round" in result
+    
+    def test_backward_compatibility_existing_behavior(self):
+        """Test that existing single-tool behavior is preserved."""
+        # This test ensures that the refactoring doesn't break existing functionality
+        tool_use_block = MockToolUseBlock("search_course_content", {"query": "Python"}, "tool_123")
+        
+        # Set up the same pattern as the original single-tool test
+        first_response = MockAnthropicResponse([tool_use_block], stop_reason="tool_use")
+        final_response = MockAnthropicResponse([MockTextBlock("Single tool response")])
+        
+        self.mock_client.messages.create.side_effect = [first_response, final_response]
+        
+        mock_tool_manager = Mock()
+        mock_tool_manager.execute_tool.return_value = "Tool result"
+        
+        mock_tools = [{"name": "search_course_content", "description": "Search tool"}]
+        
+        result = self.ai_generator.generate_response(
+            "Simple query",
+            tools=mock_tools,
+            tool_manager=mock_tool_manager
+        )
+        
+        assert result == "Single tool response"
+        assert mock_tool_manager.execute_tool.call_count == 1
+        
+        # For single-tool scenarios, we expect 2 API calls (tool use, then final)
+        assert self.mock_client.messages.create.call_count == 2
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
