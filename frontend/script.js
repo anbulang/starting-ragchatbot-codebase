@@ -31,12 +31,8 @@ function setupEventListeners() {
     
     // New chat button
     const newChatBtn = document.getElementById('newChatBtn');
-    console.log('New chat button element:', newChatBtn);
     if (newChatBtn) {
         newChatBtn.addEventListener('click', startNewChat);
-        console.log('Event listener added to new chat button');
-    } else {
-        console.error('New chat button not found!');
     }
     
     // Suggested questions
