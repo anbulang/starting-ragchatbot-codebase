@@ -62,7 +62,7 @@ def analyze_ai_generator():
     print("\n🔍 Analyzing ai_generator.py...")
     
     try:
-        with open('../ai_generator.py', 'r') as f:
+        with open('ai_generator.py', 'r') as f:
             content = f.read()
         
         issues = []
@@ -101,7 +101,7 @@ def analyze_rag_system():
     print("\n🔍 Analyzing rag_system.py...")
     
     try:
-        with open('../rag_system.py', 'r') as f:
+        with open('rag_system.py', 'r') as f:
             content = f.read()
         
         issues = []
@@ -140,7 +140,7 @@ def analyze_vector_store():
     print("\n🔍 Analyzing vector_store.py...")
     
     try:
-        with open('../vector_store.py', 'r') as f:
+        with open('vector_store.py', 'r') as f:
             content = f.read()
         
         issues = []
@@ -206,7 +206,7 @@ def identify_potential_query_failure_causes():
     potential_causes = []
     
     # Check if there's any hardcoded "query failed" message
-    files_to_check = ['../app.py', '../rag_system.py', '../ai_generator.py', '../search_tools.py']
+    files_to_check = ['app.py', 'rag_system.py', 'ai_generator.py', 'search_tools.py']
     
     for file_path in files_to_check:
         try:
@@ -219,7 +219,7 @@ def identify_potential_query_failure_causes():
     
     # Check for exception handling that might swallow errors
     try:
-        with open('../rag_system.py', 'r') as f:
+        with open('rag_system.py', 'r') as f:
             content = f.read()
             # Look for bare except clauses that might hide real errors
             if re.search(r'except:\s*$', content, re.MULTILINE):
@@ -229,7 +229,7 @@ def identify_potential_query_failure_causes():
     
     # Check if AI system prompt allows for failure responses
     try:
-        with open('../ai_generator.py', 'r') as f:
+        with open('ai_generator.py', 'r') as f:
             content = f.read()
             if 'SYSTEM_PROMPT' in content:
                 print("✅ Found system prompt in AIGenerator")
