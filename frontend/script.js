@@ -126,19 +126,19 @@ function addMessage(content, type, sources = null, isWelcome = false) {
         const processedSources = sources.map(source => {
             if (typeof source === 'object' && source.text && source.link) {
                 // Create clickable link that opens in new tab
-                return `<a href="${source.link}" target="_blank" class="source-link">${escapeHtml(source.text)}</a>`;
+                return `<div class="source-item"><a href="${source.link}" target="_blank" class="source-link">${escapeHtml(source.text)}</a></div>`;
             } else if (typeof source === 'string') {
                 // Plain text source
-                return escapeHtml(source);
+                return `<div class="source-item">${escapeHtml(source)}</div>`;
             } else {
-                return escapeHtml(String(source));
+                return `<div class="source-item">${escapeHtml(String(source))}</div>`;
             }
         });
         
         html += `
             <details class="sources-collapsible">
                 <summary class="sources-header">Sources</summary>
-                <div class="sources-content">${processedSources.join(', ')}</div>
+                <div class="sources-content">${processedSources.join('')}</div>
             </details>
         `;
     }
