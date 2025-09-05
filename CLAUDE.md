@@ -64,3 +64,4 @@ docker run -p 8000:8000 --env-file .env rag-chatbot
 - Sessions are managed in-memory and reset on server restart
 - Configuration is centralized in `backend/config.py`
 - No test framework is currently configured in this project
+- 使用的docker启动的该项目,后续添加依赖都从dockerfile中添加
