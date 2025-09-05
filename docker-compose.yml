@@ -14,6 +14,10 @@ services:
       - ./backend/chroma_db:/app/backend/chroma_db
       # Mount docs for document loading (optional, for development)
       - ./docs:/app/docs
+      # Mount backend code for hot reload during development
+      - ./backend:/app/backend
+      # Mount frontend static files for instant updates
+      - ./frontend:/app/frontend
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/courses"]
