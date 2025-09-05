@@ -548,7 +548,7 @@ header h1 {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     width: 100%;
-    text-align: left;
+    text-align: center; /* Changed from left to center for testing */
 }
 
 .stats-header:focus,
