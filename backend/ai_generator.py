@@ -95,14 +95,12 @@ Provide only the direct answer to what was asked.
             api_params["tools"] = tools
             api_params["tool_choice"] = {"type": "auto"}
         
-        # Get response from Claude
+        # Use sequential tool execution if tools and tool_manager are available
+        if tools and tool_manager:
+            return self._execute_tool_rounds(api_params, tool_manager)
+        
+        # Handle non-tool requests with single API call
         response = self.client.messages.create(**api_params)
-        
-        # Handle tool execution if needed
-        if response.stop_reason == "tool_use" and tool_manager:
-            return self._handle_tool_execution(response, api_params, tool_manager)
-        
-        # Return direct response
         return response.content[0].text
     
     def _handle_tool_execution(self, initial_response, base_params: Dict[str, Any], tool_manager):
