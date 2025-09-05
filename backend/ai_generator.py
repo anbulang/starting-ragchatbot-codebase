@@ -55,6 +55,9 @@ Provide only the direct answer to what was asked.
             "temperature": 0,
             "max_tokens": 800
         }
+        
+        # Configuration for sequential tool calling
+        self.max_tool_rounds = 2
     
     def generate_response(self, query: str,
                          conversation_history: Optional[str] = None,
