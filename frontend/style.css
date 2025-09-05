@@ -539,9 +539,9 @@ header h1 {
     font-weight: 600;
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-    background: var(--background);
+    padding: 0.5rem 0;
+    border: none;
+    background: none;
     border-radius: 8px;
     outline: none;
     transition: all 0.2s ease;
