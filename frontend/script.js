@@ -29,6 +29,11 @@ function setupEventListeners() {
         if (e.key === 'Enter') sendMessage();
     });
     
+    // New chat button
+    const newChatBtn = document.getElementById('newChatBtn');
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', startNewChat);
+    }
     
     // Suggested questions
     document.querySelectorAll('.suggested-item').forEach(button => {
