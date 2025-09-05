@@ -179,12 +179,12 @@ def check_file_dependencies():
     print("\n🔍 Checking file dependencies...")
     
     required_files = [
-        '../search_tools.py',
-        '../ai_generator.py', 
-        '../rag_system.py',
-        '../vector_store.py',
-        '../models.py',
-        '../app.py'
+        'search_tools.py',
+        'ai_generator.py', 
+        'rag_system.py',
+        'vector_store.py',
+        'models.py',
+        'app.py'
     ]
     
     missing_files = []
