@@ -243,17 +243,34 @@ header h1 {
 .sources-content {
     padding: 0 0.5rem 0.25rem 1.5rem;
     color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.source-item {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.source-item:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
 }
 
 .source-link {
-    color: var(--primary-color);
+    color: var(--text-primary);
     text-decoration: none;
-    transition: color 0.2s ease;
+    display: block;
+    width: 100%;
 }
 
 .source-link:hover {
-    color: var(--primary-hover);
-    text-decoration: underline;
+    color: var(--primary-color);
 }
 
 /* Markdown formatting styles */
