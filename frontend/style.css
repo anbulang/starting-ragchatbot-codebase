@@ -251,15 +251,20 @@ header h1 {
 .source-item {
     background: var(--surface);
     border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
     transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .source-item:hover {
     background: var(--surface-hover);
     border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .source-link {
@@ -267,10 +272,26 @@ header h1 {
     text-decoration: none;
     display: block;
     width: 100%;
+    font-weight: 500;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.source-link:before {
+    content: "📄";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1rem;
+    opacity: 0.7;
 }
 
 .source-link:hover {
     color: var(--primary-color);
+}
+
+.source-link:hover:before {
+    opacity: 1;
 }
 
 /* Markdown formatting styles */
