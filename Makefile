@@ -12,8 +12,14 @@ install: ## Install all dependencies
 format: ## Format code with black and isort
 	./scripts/format.sh
 
+format-docker: ## Format code using Docker (recommended for compatibility)
+	./scripts/format-docker.sh
+
 lint: ## Run linting checks (flake8, mypy)
 	./scripts/lint.sh
+
+lint-docker: ## Run linting checks using Docker (recommended for compatibility)
+	./scripts/lint-docker.sh
 
 check: ## Run all quality checks without modifying files
 	./scripts/check.sh
