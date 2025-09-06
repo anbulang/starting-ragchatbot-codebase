@@ -25,3 +25,19 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  # Service for code quality checks
+  quality-tools:
+    build: .
+    volumes:
+      - .:/app
+      - ./backend:/app/backend
+      - ./scripts:/app/scripts
+    working_dir: /app
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    env_file:
+      - .env
+    profiles:
+      - tools
+    command: /bin/bash
