@@ -34,8 +34,9 @@ COPY README.md ./
 COPY main.py ./
 COPY Makefile ./
 
-# Create necessary directories for ChromaDB and frontend (for volume mounting)
-RUN mkdir -p /app/backend/chroma_db /app/frontend && \
+# Make scripts executable and create necessary directories
+RUN chmod +x scripts/*.sh && \
+    mkdir -p /app/backend/chroma_db /app/frontend && \
     chmod -R 755 /app/backend/chroma_db /app/frontend
 
 # Expose port
