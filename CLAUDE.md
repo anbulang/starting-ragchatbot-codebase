@@ -56,6 +56,81 @@ docker build -t rag-chatbot .
 docker run -p 8000:8000 --env-file .env rag-chatbot
 ```
 
+### Code Quality Tools
+
+The project includes comprehensive code quality tools for maintaining consistent code style and catching issues early:
+
+#### Available Quality Tools
+- **Black**: Code formatter for consistent Python style (88 character line length)
+- **isort**: Import sorter to organize imports consistently
+- **flake8**: Style guide enforcement and error checking
+- **mypy**: Static type checker for Python
+
+#### Usage Commands
+
+**Using Makefile (recommended):**
+```bash
+# Show all available commands
+make help
+
+# Format code (black + isort)
+make format              # Native (requires local tools)
+make format-docker       # Using Docker (recommended)
+
+# Run linting (flake8 + mypy)
+make lint                # Native
+make lint-docker         # Using Docker (recommended)
+
+# Check formatting without modifying files
+make check
+
+# Complete quality workflow (format + lint + test)
+make quality
+
+# Run tests only
+make test
+
+# Clean temporary files
+make clean
+```
+
+**Using Scripts Directly:**
+```bash
+# Format code
+./scripts/format.sh         # Native
+./scripts/format-docker.sh  # Docker
+
+# Run linting
+./scripts/lint.sh           # Native  
+./scripts/lint-docker.sh    # Docker
+
+# Check without modifying
+./scripts/check.sh
+
+# Complete workflow
+./scripts/quality.sh
+```
+
+#### Docker-Based Quality Checks (Recommended)
+
+Since the project uses Docker and some dependencies can have platform-specific issues, Docker-based quality checks are recommended:
+
+```bash
+# Format code using Docker
+make format-docker
+
+# Run all quality checks using Docker
+make lint-docker
+```
+
+#### Configuration
+
+Quality tools are configured in `pyproject.toml`:
+- **Black**: 88 character line length, Python 3.13 target
+- **isort**: Black-compatible profile with project-specific import grouping
+- **mypy**: Strict type checking with external library overrides
+- **flake8**: 88 character line length, ignoring Black-incompatible rules (E203, W503)
+
 ### Key Development Notes
 
 - The system automatically loads documents from the `docs/` folder on startup
