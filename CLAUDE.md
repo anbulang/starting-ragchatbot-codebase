@@ -126,10 +126,33 @@ make lint-docker
 #### Configuration
 
 Quality tools are configured in `pyproject.toml`:
-- **Black**: 88 character line length, Python 3.13 target
+- **Black**: 88 character line length, Python 3.13 target, excludes docs and build directories
 - **isort**: Black-compatible profile with project-specific import grouping
-- **mypy**: Strict type checking with external library overrides
+- **mypy**: Strict type checking with external library overrides for chromadb and sentence-transformers
 - **flake8**: 88 character line length, ignoring Black-incompatible rules (E203, W503)
+
+#### Quality Tool Features
+
+**Black Formatter:**
+- Automatically formats Python code for consistency
+- 88 character line length (Black's default)
+- Targets Python 3.13+ syntax
+- Excludes documentation and build directories
+
+**isort Import Sorter:**
+- Organizes imports in standard order
+- Compatible with Black formatting
+- Recognizes project modules (`backend`) and third-party libraries
+
+**flake8 Linter:**
+- Style guide enforcement (PEP 8)
+- Error and warning detection
+- Ignores Black-incompatible rules for seamless integration
+
+**mypy Type Checker:**
+- Static type analysis for Python
+- Strict checking enabled for robust code quality
+- Configured to ignore missing imports for external ML libraries
 
 ### Key Development Notes
 
